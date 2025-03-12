@@ -9,7 +9,12 @@ public class GameManager : MonoBehaviour
     [Header("Loading")]
     [SerializeField] private GameObject loadingScreen;
 
+    [Header("SFX")]
+    [SerializeField]private AudioSource MenuAudSrc;
+    [SerializeField] private AudioSource BGMAudSrc;
+    public AudioClip BtnClickSfx;
 
+    
 
     public void Level1()
     {
@@ -20,6 +25,9 @@ public class GameManager : MonoBehaviour
 
     void loadscene(string scenename)
     {
+        MenuAudSrc.clip = BtnClickSfx;
+        BGMAudSrc.Stop();
+        MenuAudSrc.Play();
         StartCoroutine(loadSceneCoroutine(scenename));
     }
 

@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class AuthManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField usernameSignInInput;
     public TMP_InputField passwordSignInInput;
     public TextMeshProUGUI warningTextSignIn;
+    public TextMeshProUGUI SignInBtnText;
 
     [Header("Sign up")]
     public GameObject SignUpField;
@@ -50,7 +52,8 @@ public class AuthManager : MonoBehaviour
         {
             //What happens after account in created : 
             Debug.Log("Sign Up Success: " + request.downloadHandler.text);
-            warningTextSignUp.text = "Account created successfully!";
+            warningTextSignUp.color = Color.green;
+            warningTextSignUp.text = "Account created successfully! Sign in to continue";
         }
         else
         {
@@ -98,9 +101,10 @@ public class AuthManager : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            //Load next scene :
+            //Load next scene 
             Debug.Log("Sign In Success: " + request.downloadHandler.text);
-            warningTextSignIn.text = "Logged in successfully!";
+            SignInBtnText.text = "Loading...";
+            StartCoroutine(LoadScene("Home"));
         }
         else
         {
@@ -108,6 +112,23 @@ public class AuthManager : MonoBehaviour
             Debug.LogError("Sign In Error: " + request.error);
         }
     }
+
+    public IEnumerator LoadScene(string SceneName)
+    {
+        AsyncOperation scene = SceneManager.LoadSceneAsync(SceneName);
+        scene.allowSceneActivation = false;
+        while (!scene.isDone)
+        {
+            float progress = Mathf.Clamp01(scene.progress / 0.9f);
+            if(progress >= 1f)
+            {
+                scene.allowSceneActivation = true;
+            }
+            yield return null;
+        }
+
+    }
+
 
     public void SwitchToSignUp()
     {

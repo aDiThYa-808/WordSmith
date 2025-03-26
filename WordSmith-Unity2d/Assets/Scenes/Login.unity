@@ -698,6 +698,7 @@ MonoBehaviour:
   usernameSignInInput: {fileID: 1286471054}
   passwordSignInInput: {fileID: 1069733658}
   warningTextSignIn: {fileID: 1151265066}
+  SignInBtnText: {fileID: 43871813}
   SignUpField: {fileID: 1868237374}
   usernameSignUpInput: {fileID: 1088627573}
   passwordSignUpInput: {fileID: 1620374813}
@@ -3275,8 +3276,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -43.240906}
-  m_SizeDelta: {x: 600, y: 50}
+  m_AnchoredPosition: {x: 0, y: -41.5}
+  m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1529794790
 MonoBehaviour:

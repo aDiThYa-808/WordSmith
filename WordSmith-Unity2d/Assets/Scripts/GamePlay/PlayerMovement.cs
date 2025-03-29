@@ -15,8 +15,17 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private BoxCollider2D BoxCol;
+
+    [Header("Audio sources")]
+    public AudioSource PlayerVoiceSrc;
+    public AudioSource FootSrc;
+
+    [Header("Audio clips")]
+    public AudioClip JumpSfx;
+    public AudioClip RunSfx;
     
-    
+
+
 
     private void Awake()
     {
@@ -50,6 +59,20 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale = new Vector3(-2,2,2);
         }
 
+        if (Input.GetAxis("Horizontal") != 0 && isGrounded())
+        {
+            if (!FootSrc.isPlaying) // Only play if it's not already playing
+            {
+                FootSrc.clip = RunSfx;
+                FootSrc.Play();
+            }
+        }
+        else
+        {
+            FootSrc.Stop(); // Stop the sound when the player stops moving
+        }
+
+
 
     }
 
@@ -59,17 +82,16 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
             anim.SetTrigger("jump");
-            
-            
-            
+
+            PlayerVoiceSrc.clip = JumpSfx;
+            PlayerVoiceSrc.Play();
+
         }
         anim.SetBool("Grounded", isGrounded());
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
         
     }
+
+    
 
 
     bool isGrounded()

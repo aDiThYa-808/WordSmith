@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
+    [Header("Health bar components")]
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private Image totalHealthBar;
     [SerializeField] private Image currentHealthBar;
+
 
     private void Awake()
     {

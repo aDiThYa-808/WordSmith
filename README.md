@@ -1,2 +1,2 @@
 # WordSmith
- A word builder game. (SE PROJECT)
+ A 2d action platformer game. (SE PROJECT)

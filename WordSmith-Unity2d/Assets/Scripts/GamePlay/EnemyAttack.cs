@@ -4,11 +4,21 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
+    [Header("Attack stats")]
     [SerializeField] private float attackCoolDown;
+    [SerializeField] private float damage;
+
+    [Header("Attack range")]
     [SerializeField] private float range;
     [SerializeField] private float colliderDistance;
-    [SerializeField] private int damage;
+    
+    [Header("Layermasks")]
     public LayerMask playerLayer;
+
+    [Header("Audio sources and clips")]
+    [SerializeField] private AudioSource WeaponAudioSource;
+    public AudioClip SwordSlash;
+
     private BoxCollider2D boxCol;
     private float coolDownTimer = Mathf.Infinity;
 
@@ -34,6 +44,8 @@ public class EnemyAttack : MonoBehaviour
             {
                 coolDownTimer = 0;
                 anim.SetTrigger("attack");
+
+                
 
             }
         }
@@ -80,6 +92,8 @@ public class EnemyAttack : MonoBehaviour
         if (PlayerInSight())
         {
             playerHealth.DamagePlayer(damage);
+            WeaponAudioSource.clip = SwordSlash;
+            WeaponAudioSource.Play();
         }
     }
 }

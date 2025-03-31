@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Player components")]
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private LayerMask obstacleLayer;
+   // [SerializeField] private LayerMask obstacleLayer;
     private float wallJumpCoolDown;
     private Rigidbody2D rb;
     private Animator anim;
@@ -78,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
 
     void jump()
     {
-        if (Input.GetKey(KeyCode.Space) && isGrounded())
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded())
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpSpeed);
             anim.SetTrigger("jump");
@@ -100,9 +100,9 @@ public class PlayerMovement : MonoBehaviour
         return raycastHit.collider != null;
     }
 
-    bool onWall()
+    /*bool onWall()
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(BoxCol.bounds.center, BoxCol.bounds.size, 0, new Vector2(transform.localScale.x,0), 0.01f, obstacleLayer);
         return raycastHit.collider != null;
-    }
+    }*/
 }

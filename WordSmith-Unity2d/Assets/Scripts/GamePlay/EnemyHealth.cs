@@ -21,6 +21,9 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRen;
 
+    //[Header("Patroling")]
+    //[SerializeField] private GameObject enemyPatrol;
+
     private Animator anim;
     private bool dead;
 
@@ -61,8 +64,10 @@ public class EnemyHealth : MonoBehaviour
                 EnemyVoiceSrc.Play();
 
                 //disable player movements after death
-                GetComponent<PlayerMovement>().enabled = false;
+                GetComponentInParent<EnemyPatrol>().enabled = false;
                 dead = true;
+
+               
             }
 
         }
@@ -85,4 +90,10 @@ public class EnemyHealth : MonoBehaviour
         //enable collisions
         Physics2D.IgnoreLayerCollision(7, 8, false);
     }
+
+    /*private IEnumerator destroyEnemyGameObject()
+    {
+        yield return new WaitForSeconds(2f);
+        Destroy(enemyPatrol);
+    }*/
 }

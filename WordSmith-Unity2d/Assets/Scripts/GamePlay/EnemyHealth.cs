@@ -21,8 +21,8 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRen;
 
-    //[Header("Patroling")]
-    //[SerializeField] private GameObject enemyPatrol;
+    [Header("Level Manager")]
+    [SerializeField] private GameObject gamePlayManager;
 
     private Animator anim;
     private bool dead;
@@ -67,6 +67,7 @@ public class EnemyHealth : MonoBehaviour
                 GetComponentInParent<EnemyPatrol>().enabled = false;
                 dead = true;
 
+                gamePlayManager.GetComponent<GamePlayManager>().EnemyDefeated(gameObject);
                
             }
 

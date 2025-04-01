@@ -1,29 +1,30 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraFollow : MonoBehaviour
 {
-    // Follow player
-    [SerializeField] private Transform player;
-    [SerializeField] private float aheadDistance;
-    [SerializeField] private float cameraSpeed;
-    private float lookAhead;
+    [Header("Camera movement settings")]
+    [SerializeField] private float FollowSpeed = 2f;
+    [SerializeField] private float yOffset = 1f;
+    public Transform target;
 
     // Camera boundaries
-    [SerializeField] private float minX; // Left boundary
-    [SerializeField] private float maxX; // Right boundary
+    [Header("Boundaries")]
+    [SerializeField] private float minX, maxX; // Left and right boundaries
+    [SerializeField] private float minY, maxY; // Bottom and top boundaries
 
-    private void Update()
+    // Update is called once per frame
+    void Update()
     {
-        // Calculate the desired camera position
-        float targetX = player.position.x + lookAhead;
+        // Create the desired camera position
+        Vector3 newPos = new Vector3(target.position.x, target.position.y + yOffset, -10f);
 
-        // Clamp the position within the boundaries
-        targetX = Mathf.Clamp(targetX, minX, maxX);
+        // Clamp the camera position to stay within boundaries
+        float clampedX = Mathf.Clamp(newPos.x, minX, maxX);
+        float clampedY = Mathf.Clamp(newPos.y, minY, maxY);
 
-        // Update camera position
-        transform.position = new Vector3(targetX, transform.position.y, transform.position.z);
-
-        // Smoothly adjust lookAhead based on player's direction
-        lookAhead = Mathf.Lerp(lookAhead, (aheadDistance * player.localScale.x), Time.deltaTime * cameraSpeed);
+        // Set the camera's position smoothly
+        transform.position = Vector3.Slerp(transform.position, new Vector3(clampedX, clampedY, newPos.z), FollowSpeed * Time.deltaTime);
     }
 }

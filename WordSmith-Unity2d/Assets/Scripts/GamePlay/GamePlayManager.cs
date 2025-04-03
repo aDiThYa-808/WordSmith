@@ -13,6 +13,30 @@ public class GamePlayManager : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI textMessage;
+    [SerializeField] private TextMeshProUGUI timer;
+
+    private float elapsedTime = 0f;
+    private bool timerRunning = false;
+
+    private void Start()
+    {
+        elapsedTime = 0f;
+        timerRunning = true;
+        StartCoroutine(UpdateTimer());
+    }
+
+    IEnumerator UpdateTimer()
+    {
+        while (timerRunning)
+        {
+            elapsedTime += Time.deltaTime;
+            int minutes = Mathf.FloorToInt(elapsedTime / 60);
+            int seconds = Mathf.FloorToInt(elapsedTime % 60);
+            timer.text = string.Format("{0:00}:{1:00}", minutes, seconds); // Format as MM:SS
+            yield return null;
+        }
+    }
+
 
 
     public void EnemyDefeated(GameObject enemy)
@@ -32,4 +56,13 @@ public class GamePlayManager : MonoBehaviour
         yield return new WaitForSeconds(2f);
         textMessage.text = "";
     }
+
+    public string StopAndGetFinalTime()
+    {
+        timerRunning = false;
+        int minutes = Mathf.FloorToInt(elapsedTime / 60);
+        int seconds = Mathf.FloorToInt(elapsedTime % 60);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
+
 }

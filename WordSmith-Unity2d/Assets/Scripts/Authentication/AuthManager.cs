@@ -3,6 +3,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
+using System;
 
 public class AuthManager : MonoBehaviour
 {
@@ -19,9 +21,14 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField passwordSignUpInput;
     public TextMeshProUGUI warningTextSignUp;
 
-    private string baseUrl = "http://localhost:5000/api/auth"; // Change this if deployed
+    private string baseUrl = "http://localhost:5000/api/auth"; // Update for deployment
 
-    // 🔹 Sign Up Function
+    [System.Serializable]
+    public class ResponseData
+    {
+        public string token;
+    }
+
     public void SignUp()
     {
         string username = usernameSignUpInput.text.Trim();
@@ -38,11 +45,10 @@ public class AuthManager : MonoBehaviour
 
     IEnumerator SignUpRequest(string username, string password)
     {
-        string jsonData = "{\"username\":\"" + username + "\", \"password\":\"" + password + "\"}";
+        string jsonData = JsonConvert.SerializeObject(new { username, password });
 
         UnityWebRequest request = new UnityWebRequest(baseUrl + "/register", "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(jsonData));
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
@@ -50,29 +56,19 @@ public class AuthManager : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            //What happens after account in created : 
-            Debug.Log("Sign Up Success: " + request.downloadHandler.text);
+            Debug.Log("✅ Sign Up Success: " + request.downloadHandler.text);
             warningTextSignUp.color = Color.green;
-            warningTextSignUp.text = "Account created successfully! Sign in to continue";
+            warningTextSignUp.text = "Account created! Sign in to continue";
         }
         else
         {
-            string errorMessage = request.downloadHandler.text;
-
-            if (errorMessage.Contains("E11000 duplicate key error"))
-            {
-                warningTextSignUp.text = "Username already taken!";
-            }
-            else
-            {
-                warningTextSignUp.text = "Sign Up Failed!";
-            }
-
-            Debug.LogError("Sign Up Error: " + errorMessage);
+            warningTextSignUp.text = request.downloadHandler.text.Contains("E11000 duplicate key error")
+                ? "Username already taken!"
+                : "Sign Up Failed!";
+            Debug.LogError("❌ Sign Up Error: " + request.downloadHandler.text);
         }
     }
 
-    // 🔹 Sign In Function
     public void SignIn()
     {
         string username = usernameSignInInput.text.Trim();
@@ -89,11 +85,10 @@ public class AuthManager : MonoBehaviour
 
     IEnumerator SignInRequest(string username, string password)
     {
-        string jsonData = "{\"username\":\"" + username + "\", \"password\":\"" + password + "\"}";
+        string jsonData = JsonConvert.SerializeObject(new { username, password });
 
         UnityWebRequest request = new UnityWebRequest(baseUrl + "/login", "POST");
-        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonData);
-        request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+        request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(jsonData));
         request.downloadHandler = new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
 
@@ -101,50 +96,77 @@ public class AuthManager : MonoBehaviour
 
         if (request.result == UnityWebRequest.Result.Success)
         {
-            //Load next scene 
-            Debug.Log("Sign In Success: " + request.downloadHandler.text);
-            SignInBtnText.text = "Loading...";
-            StartCoroutine(LoadScene("Home"));
+            string jsonResponse = request.downloadHandler.text;
+            Debug.Log("✅ API Response: " + jsonResponse);
+
+            try
+            {
+                ResponseData responseData = JsonConvert.DeserializeObject<ResponseData>(jsonResponse);
+                string token = responseData?.token;
+
+                if (string.IsNullOrEmpty(token))
+                {
+                    Debug.LogError("❌ API response does not contain a valid token!");
+                    warningTextSignIn.text = "Invalid response from server!";
+                    yield break;
+                }
+
+                Debug.Log("🔹 Retrieved token: " + token);
+
+                // Save token in PlayerPrefs
+                PlayerPrefs.SetString("auth_token", token);
+                PlayerPrefs.Save();
+
+                // Debug PlayerPrefs storage
+                string storedToken = PlayerPrefs.GetString("auth_token", "Not Found");
+                Debug.Log("🔹 Stored in PlayerPrefs: " + storedToken);
+
+                SignInBtnText.text = "Loading...";
+                StartCoroutine(LoadScene("Home"));  // Load Level-1 after sign-in
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("❌ JSON Parsing Error: " + e.Message);
+                warningTextSignIn.text = "Error processing server response!";
+            }
         }
         else
         {
             warningTextSignIn.text = "Sign In Failed!";
-            Debug.LogError("Sign In Error: " + request.error);
+            Debug.LogError("❌ Sign In Error: " + request.error);
         }
     }
 
     public IEnumerator LoadScene(string SceneName)
     {
+        yield return new WaitForSeconds(2f); // Give time for PlayerPrefs to save
         AsyncOperation scene = SceneManager.LoadSceneAsync(SceneName);
         scene.allowSceneActivation = false;
+
         while (!scene.isDone)
         {
-            float progress = Mathf.Clamp01(scene.progress / 0.9f);
-            if(progress >= 1f)
+            if (scene.progress >= 0.9f)
             {
+                yield return new WaitForSeconds(2f); // Short delay before activation
                 scene.allowSceneActivation = true;
             }
             yield return null;
         }
-
     }
-
 
     public void SwitchToSignUp()
     {
         SignInField.SetActive(false);
         SignUpField.SetActive(true);
+        usernameSignInInput.text = passwordSignInInput.text = "";
         warningTextSignIn.text = "";
-        usernameSignInInput.text = "";
-        passwordSignInInput.text = "";
     }
 
     public void SwitchToSignIn()
     {
         SignUpField.SetActive(false);
         SignInField.SetActive(true);
+        usernameSignUpInput.text = passwordSignUpInput.text = "";
         warningTextSignUp.text = "";
-        usernameSignUpInput.text = "";
-        passwordSignUpInput.text = "";
     }
 }

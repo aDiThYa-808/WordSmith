@@ -1,11 +1,19 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class EndLevel : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private GameObject EndLevelPanel;
+    [SerializeField] private GameObject WordEntryPanel;
+    [SerializeField] private GameObject LevelWinPanel;
+    [SerializeField] private GameObject oneStar;
+    [SerializeField] private GameObject twoStar;
+    [SerializeField] private GameObject threeStar;
+    [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private GameObject loadingText;
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private string MagicWord;
 
@@ -42,7 +50,8 @@ public class EndLevel : MonoBehaviour
     {
         if (inputField.text.Trim().ToLower() == MagicWord.ToLower())
         {
-            EndLevelPanel.SetActive(false);
+            WordEntryPanel.SetActive(false);
+            
             levelComplete = true;
             completionTime = gamePlayManager.StopAndGetFinalTime();
             stars = StarsObtained(completionTime);
@@ -50,6 +59,23 @@ public class EndLevel : MonoBehaviour
             Debug.Log($"✅ Correct! Level Complete. Time: {completionTime}, Stars: {stars}");
 
             LevelCleared();
+
+            LevelWinPanel.SetActive(true);
+
+            switch (stars)
+            {
+                case 1: oneStar.SetActive(true);
+                    break;
+
+                case 2: twoStar.SetActive(true);
+                    break;
+
+                case 3: threeStar.SetActive(true);
+                    break;
+            }
+
+            text.text = "Level completed in " + completionTime + " minutes!";
+            
         }
         else
         {
@@ -105,4 +131,29 @@ public class EndLevel : MonoBehaviour
             return 1;
     }
 
-}
+    public void FinishButton()
+    {
+        LevelWinPanel.SetActive(false);
+        loadingText.SetActive(true);
+        StartCoroutine(LoadScene("Levels"));
+    }
+
+
+        public IEnumerator LoadScene(string SceneName)
+        {
+            AsyncOperation scene = SceneManager.LoadSceneAsync(SceneName);
+            scene.allowSceneActivation = false;
+
+            while (!scene.isDone)
+            {
+                if (scene.progress >= 0.9f)
+                {
+                    yield return new WaitForSeconds(0.5f); // Short delay before activation
+                    scene.allowSceneActivation = true;
+                }
+                yield return null;
+            }
+        }
+    }
+
+

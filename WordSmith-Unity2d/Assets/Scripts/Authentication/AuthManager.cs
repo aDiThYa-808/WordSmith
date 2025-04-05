@@ -8,6 +8,8 @@ using System;
 
 public class AuthManager : MonoBehaviour
 {
+    public static AuthManager Instance;
+
     [Header("Sign in")]
     public GameObject SignInField;
     public TMP_InputField usernameSignInInput;
@@ -22,6 +24,7 @@ public class AuthManager : MonoBehaviour
     public TextMeshProUGUI warningTextSignUp;
 
     private string baseUrl = "http://localhost:5000/api/auth"; // Update for deployment
+    public string username;
 
     [System.Serializable]
     public class ResponseData
@@ -29,6 +32,20 @@ public class AuthManager : MonoBehaviour
         public string token;
     }
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    // Sign-up logic
     public void SignUp()
     {
         string username = usernameSignUpInput.text.Trim();
@@ -62,6 +79,7 @@ public class AuthManager : MonoBehaviour
         }
         else
         {
+            // Handle duplicate key error (username already taken)
             warningTextSignUp.text = request.downloadHandler.text.Contains("E11000 duplicate key error")
                 ? "Username already taken!"
                 : "Sign Up Failed!";
@@ -69,9 +87,10 @@ public class AuthManager : MonoBehaviour
         }
     }
 
+    // Sign-in logic
     public void SignIn()
     {
-        string username = usernameSignInInput.text.Trim();
+        username = usernameSignInInput.text.Trim();
         string password = passwordSignInInput.text.Trim();
 
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -101,6 +120,7 @@ public class AuthManager : MonoBehaviour
 
             try
             {
+                // Try parsing the response
                 ResponseData responseData = JsonConvert.DeserializeObject<ResponseData>(jsonResponse);
                 string token = responseData?.token;
 
@@ -113,13 +133,8 @@ public class AuthManager : MonoBehaviour
 
                 Debug.Log("🔹 Retrieved token: " + token);
 
-                // Save token in PlayerPrefs
-                PlayerPrefs.SetString("auth_token", token);
-                PlayerPrefs.Save();
-
-                // Debug PlayerPrefs storage
-                string storedToken = PlayerPrefs.GetString("auth_token", "Not Found");
-                Debug.Log("🔹 Stored in PlayerPrefs: " + storedToken);
+                // Save username to the instance variable
+                username = usernameSignInInput.text.Trim();
 
                 SignInBtnText.text = "Loading...";
                 StartCoroutine(LoadScene("Home"));  // Load Level-1 after sign-in
@@ -137,6 +152,13 @@ public class AuthManager : MonoBehaviour
         }
     }
 
+    // Get the username
+    public string GetUsername()
+    {
+        return username;
+    }
+
+    // Load a new scene with a delay
     public IEnumerator LoadScene(string SceneName)
     {
         yield return new WaitForSeconds(2f); // Give time for PlayerPrefs to save
@@ -154,6 +176,7 @@ public class AuthManager : MonoBehaviour
         }
     }
 
+    // Switch to sign-up form
     public void SwitchToSignUp()
     {
         SignInField.SetActive(false);
@@ -162,6 +185,7 @@ public class AuthManager : MonoBehaviour
         warningTextSignIn.text = "";
     }
 
+    // Switch to sign-in form
     public void SwitchToSignIn()
     {
         SignUpField.SetActive(false);

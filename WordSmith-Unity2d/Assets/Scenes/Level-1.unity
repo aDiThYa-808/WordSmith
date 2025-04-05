@@ -5370,9 +5370,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   username: 
+  levelNumber: 0
   stars: 0
   completionTime: 
-  levelCompleted: 0
+  levelComplete: 0
 --- !u!1 &469140064
 GameObject:
   m_ObjectHideFlags: 0
@@ -15136,9 +15137,11 @@ MonoBehaviour:
   EndLevelPanel: {fileID: 1485233652}
   inputField: {fileID: 409217205}
   MagicWord: hope
+  levelNumber: 1
   player: {fileID: 1718816036}
   gamePlayManager: {fileID: 461765086}
   completionTime: 
+  stars: 0
 --- !u!1 &1442552178
 GameObject:
   m_ObjectHideFlags: 0

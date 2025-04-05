@@ -10,11 +10,13 @@ public class EndLevel : MonoBehaviour
     [SerializeField] private string MagicWord;
 
     [Header("Level")]
+    [SerializeField] private int levelNumber;
     [SerializeField] private GameObject player;
     [SerializeField] private GamePlayManager gamePlayManager;
 
     public bool levelComplete { get; private set; }
     public string completionTime;
+    public int stars;
 
     private void Awake()
     {
@@ -43,7 +45,7 @@ public class EndLevel : MonoBehaviour
             EndLevelPanel.SetActive(false);
             levelComplete = true;
             completionTime = gamePlayManager.StopAndGetFinalTime();
-            int stars = StarsObtained(completionTime);
+            stars = StarsObtained(completionTime);
 
             Debug.Log($"✅ Correct! Level Complete. Time: {completionTime}, Stars: {stars}");
 
@@ -59,14 +61,20 @@ public class EndLevel : MonoBehaviour
 
     private void LevelCleared()
     {
-        string username = PlayerPrefs.GetString("username", "Guest");
-        int stars = StarsObtained(completionTime);
+        // Fetch username directly from AuthManager
+        string username = "Guest"; // Default to 'Guest'
+        if (AuthManager.Instance != null)
+        {
+            username = AuthManager.Instance.GetUsername();
+        }
 
+        // Ensure GameProgressManager is available
         GameProgressManager progressManager = FindObjectOfType<GameProgressManager>();
 
         if (progressManager != null)
         {
-            progressManager.username = username;
+            progressManager.username = AuthManager.Instance?.GetUsername() ?? "Guest";
+            progressManager.levelNumber = levelNumber;
             progressManager.stars = stars;
             progressManager.completionTime = completionTime;
             progressManager.levelComplete = true;
@@ -80,7 +88,21 @@ public class EndLevel : MonoBehaviour
 
     private int StarsObtained(string timeString)
     {
-        return int.TryParse(timeString.Split(':')[1], out int seconds) && seconds <= 60 ? 3 : seconds <= 90 ? 2 : 1;
-    }
-}
+        string[] parts = timeString.Split(':');
+        if (parts.Length != 2 || !int.TryParse(parts[0], out int minutes) || !int.TryParse(parts[1], out int seconds))
+        {
+            Debug.LogError("❌ Invalid time format. Expected mm:ss");
+            return 1; // Fallback to 1 star on error
+        }
 
+        int totalSeconds = minutes * 60 + seconds;
+
+        if (totalSeconds <= 60)
+            return 3;
+        else if (totalSeconds <= 90)
+            return 2;
+        else
+            return 1;
+    }
+
+}

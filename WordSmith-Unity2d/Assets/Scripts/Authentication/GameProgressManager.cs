@@ -8,6 +8,7 @@ public class GameProgressManager : MonoBehaviour
 {
     [Header("Player Progress")]
     public string username;
+    public int levelNumber;
     public int stars;
     public string completionTime;
     public bool levelComplete; // Renamed for consistency
@@ -16,21 +17,31 @@ public class GameProgressManager : MonoBehaviour
 
     private void Start()
     {
-        // Load username from PlayerPrefs
-        string storedUsername = PlayerPrefs.GetString("username", "Not Found");
+        StartCoroutine(WaitForAuthManager());
+    }
 
-        Debug.Log("🔹 Loaded username from PlayerPrefs in Level-1: " + storedUsername);
+    IEnumerator WaitForAuthManager()
+    {
+        yield return new WaitUntil(() => AuthManager.Instance != null);
 
-        // If username is missing, redirect to Login scene
-        if (string.IsNullOrEmpty(storedUsername) || storedUsername == "Not Found")
+        username = AuthManager.Instance.GetUsername();
+
+        if (string.IsNullOrEmpty(username))
         {
-            Debug.LogError("❌ No username found in PlayerPrefs!");
-           // SceneManager.LoadScene("Login");
+            Debug.Log("⚠️ Username is empty, defaulting to Guest.");
+            username = "Guest";
         }
+
+        Debug.Log("✅ Username retrieved: " + username);
     }
 
     public void SaveProgress()
     {
+        if (string.IsNullOrEmpty(username))
+        {
+            Debug.LogError("❌ Cannot save progress: No username found.");
+            return; // Exit if no username
+        }
         StartCoroutine(SendProgressToServer());
     }
 
@@ -45,6 +56,7 @@ public class GameProgressManager : MonoBehaviour
         var progressData = new
         {
             username,
+            levelNumber,
             stars,
             timeTaken = completionTime, // Matches backend expectations
             levelComplete // Ensuring naming consistency

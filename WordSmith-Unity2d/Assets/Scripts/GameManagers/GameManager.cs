@@ -19,7 +19,12 @@ public class GameManager : MonoBehaviour
 
     public void Level1()
     {
-        loadscene("level-1");
+        loadscene("Level-1");
+    }
+
+    public void Level2()
+    {
+        loadscene("Level-2");
     }
 
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -11,17 +12,23 @@ public class PlayerHealth : MonoBehaviour
     [Header("Audio Sources")]
     public AudioSource CollectableAudioSrc;
     public AudioSource PlayerVoiceSrc;
+    [SerializeField] private AudioSource MusicAudioSrc;
 
     [Header("Audio Clips")]
     public AudioClip PlayerHurtSfx;
     public AudioClip PlayerDeathSfx;
     public AudioClip HealthAddSound;
+    public AudioClip GameOverSFX;
 
 
     [Header("IFrames")]
     [SerializeField] private float IFrameDuration;
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRen;
+
+    [Header("UI")]
+    [SerializeField] private GameObject GameOverText;
+    [SerializeField] private GameObject MainUI;
 
     private Animator anim;
     private bool dead;
@@ -63,6 +70,9 @@ public class PlayerHealth : MonoBehaviour
                 //disable player movements after death
                 GetComponent<PlayerMovement>().enabled = false;
                 dead = true;
+
+                GameOver();
+                
             }
             
         }
@@ -97,11 +107,37 @@ public class PlayerHealth : MonoBehaviour
     }
 
 
-    private void Update()
+    public void GameOver()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        StartCoroutine(EndGame());
+    }
+
+
+    private IEnumerator EndGame()
+    {
+        yield return new WaitForSeconds(1f);
+        GameOverText.SetActive(true);
+        MainUI.SetActive(false);
+
+        MusicAudioSrc.clip = GameOverSFX;
+        MusicAudioSrc.Play();
+
+        StartCoroutine(LoadScene("Levels"));
+    }
+
+    public IEnumerator LoadScene(string SceneName)
+    {
+        AsyncOperation scene = SceneManager.LoadSceneAsync(SceneName);
+        scene.allowSceneActivation = false;
+
+        while (!scene.isDone)
         {
-            DamagePlayer(1);
+            if (scene.progress >= 0.9f)
+            {
+                yield return new WaitForSeconds(3f);
+                scene.allowSceneActivation = true;
+            }
+            yield return null;
         }
     }
 }

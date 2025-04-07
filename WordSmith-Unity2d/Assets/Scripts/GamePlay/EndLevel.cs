@@ -40,11 +40,7 @@ public class EndLevel : MonoBehaviour
         }
     }
 
-    public void ExitButton()
-    {
-        EndLevelPanel.SetActive(false);
-        player.SetActive(true);
-    }
+    
 
     public void DoneButton()
     {

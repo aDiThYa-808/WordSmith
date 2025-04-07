@@ -36,17 +36,15 @@ public class EnemyAttack : MonoBehaviour
 
     private void Update()
     {
+
         coolDownTimer += Time.deltaTime;
 
         if (PlayerInSight())
         {
-            if (coolDownTimer >= attackCoolDown)
+            if (coolDownTimer >= attackCoolDown && playerHealth.currentHealth > 0)
             {
                 coolDownTimer = 0;
                 anim.SetTrigger("attack");
-
-                
-
             }
         }
 
@@ -74,7 +72,8 @@ public class EnemyAttack : MonoBehaviour
             playerHealth = raycastHit.transform.GetComponent<PlayerHealth>();
         }
 
-        return raycastHit.collider != null;
+        
+            return raycastHit.collider != null;
     }
 
     /*private void OnDrawGizmos()

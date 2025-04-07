@@ -25,7 +25,7 @@ public class EnemyHealth : MonoBehaviour
     [SerializeField] private GameObject gamePlayManager;
 
     private Animator anim;
-    private bool dead;
+    public bool dead { get; private set; }
 
 
     private void Awake()
@@ -63,7 +63,7 @@ public class EnemyHealth : MonoBehaviour
                 EnemyVoiceSrc.clip = EnemyDeathSfx;
                 EnemyVoiceSrc.Play();
 
-                //disable player movements after death
+                //disable enemy movements after death
                 GetComponentInParent<EnemyPatrol>().enabled = false;
                 dead = true;
 

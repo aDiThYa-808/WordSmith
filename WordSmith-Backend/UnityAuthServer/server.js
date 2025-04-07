@@ -25,6 +25,7 @@ mongoose
 try {
   app.use("/api/auth", require("./routes/authRoutes"));
   app.use("/api/progress", require("./routes/progressRoutes"));
+  app.use("/api/leaderboard", require("./routes/leaderboardRoutes"));
   console.log("✅ Routes loaded successfully");
 } catch (err) {
   console.error("❌ Error loading routes:", err);

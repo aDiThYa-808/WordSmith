@@ -5,13 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    [Header("UI")]
+    public GameObject MenuUI;
+    public GameObject LeaderBoardUI;
+
+
     [Header("Loading")]
     public GameObject LoadingScreen;
-    public GameObject MenuUI;
+    
 
     [Header("SFX")]
     public AudioSource audioSource;
     public AudioClip ButtonClickSfx;
+    public AudioClip ButtonClickSfx2;
 
     public void Play()
     {
@@ -24,7 +30,17 @@ public class MenuManager : MonoBehaviour
 
     public void Leaderboard()
     {
-
+        audioSource.clip = ButtonClickSfx2;
+        audioSource.Play();
+        MenuUI.SetActive(false);
+        LeaderBoardUI.SetActive(true);
+    }
+    public void ExitLeaderBoard()
+    {
+        audioSource.clip = ButtonClickSfx2;
+        audioSource.Play();
+        LeaderBoardUI.SetActive(false);
+        MenuUI.SetActive(true);
     }
 
     public void profile()

@@ -8,6 +8,7 @@ public class MenuManager : MonoBehaviour
     [Header("UI")]
     public GameObject MenuUI;
     public GameObject LeaderBoardUI;
+    public GameObject ProfileUI;
 
 
     [Header("Loading")]
@@ -45,7 +46,17 @@ public class MenuManager : MonoBehaviour
 
     public void profile()
     {
-
+        audioSource.clip = ButtonClickSfx2;
+        audioSource.Play();
+        MenuUI.SetActive(false);
+        ProfileUI.SetActive(true);
+    }
+    public void exitProfile()
+    {
+        audioSource.clip = ButtonClickSfx2;
+        audioSource.Play();
+        ProfileUI.SetActive(false);
+        MenuUI.SetActive(true);
     }
 
     public void share()

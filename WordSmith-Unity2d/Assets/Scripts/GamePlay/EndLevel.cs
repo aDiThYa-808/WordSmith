@@ -17,6 +17,13 @@ public class EndLevel : MonoBehaviour
     [SerializeField] private TMP_InputField inputField;
     [SerializeField] private string MagicWord;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource ButtonSrc;
+    
+    public AudioClip LevelUpSound;
+    public AudioClip SuccessButtonSound;
+    public AudioClip FailedButtonSound;
+
     [Header("Level")]
     [SerializeField] private int levelNumber;
     [SerializeField] private GameObject player;
@@ -29,6 +36,7 @@ public class EndLevel : MonoBehaviour
     private void Awake()
     {
         levelComplete = false;
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -46,6 +54,8 @@ public class EndLevel : MonoBehaviour
     {
         if (inputField.text.Trim().ToLower() == MagicWord.ToLower())
         {
+            ButtonSrc.clip = LevelUpSound;
+            ButtonSrc.Play();
             WordEntryPanel.SetActive(false);
             
             levelComplete = true;
@@ -76,6 +86,8 @@ public class EndLevel : MonoBehaviour
         else
         {
             Debug.Log("❌ Wrong word! Try again.");
+            ButtonSrc.clip = FailedButtonSound;
+            ButtonSrc.Play();
         }
 
         inputField.text = "";
@@ -129,6 +141,8 @@ public class EndLevel : MonoBehaviour
 
     public void FinishButton()
     {
+        ButtonSrc.clip = SuccessButtonSound;
+        ButtonSrc.Play();
         LevelWinPanel.SetActive(false);
         loadingText.SetActive(true);
         StartCoroutine(LoadScene("Levels"));

@@ -34,6 +34,14 @@ public class GameManager : MonoBehaviour
         loadscene("Level-2");
     }
 
+    public void Level3()
+    {
+        MenuAudSrc.clip = BtnClickSfx;
+        BGMAudSrc.Stop();
+        MenuAudSrc.Play();
+        loadscene("Level-3");
+    }
+
     public void exit()
     {
         MenuAudSrc.clip = BtnClickSfx1;

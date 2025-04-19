@@ -23,7 +23,7 @@ public class AuthManager : MonoBehaviour
     public TMP_InputField passwordSignUpInput;
     public TextMeshProUGUI warningTextSignUp;
 
-    private string baseUrl = "http://localhost:5000/api/auth"; // Update for deployment
+    private string baseUrl = "https://word-smith-c8ny.onrender.com/api/auth"; 
     public string username;
 
     [System.Serializable]

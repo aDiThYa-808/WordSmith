@@ -13,7 +13,7 @@ public class GameProgressManager : MonoBehaviour
     public string completionTime;
     public bool levelComplete; // Renamed for consistency
 
-    private string apiUrl = "http://localhost:5000/api/progress/save"; // Update for deployment
+    private string apiUrl = "https://word-smith-c8ny.onrender.com/api/progress/save"; 
 
     private void Start()
     {

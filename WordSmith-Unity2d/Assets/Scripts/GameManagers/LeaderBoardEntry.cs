@@ -11,7 +11,7 @@ public class LeaderboardManager : MonoBehaviour
     [SerializeField] private TMP_Text[] usernameTexts;
     [SerializeField] private TMP_Text[] timeTexts;
 
-    private string apiUrl = "http://localhost:5000/api/leaderboard/";
+    private string apiUrl = "https://word-smith-c8ny.onrender.com/api/leaderboard/";
 
     void Start()
     {

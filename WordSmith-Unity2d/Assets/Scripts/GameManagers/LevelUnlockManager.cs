@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 public class LevelUnlockManager : MonoBehaviour
 {
     public GameObject[] levelButtons; // Assign buttons in inspector
-    private string baseUrl = "http://localhost:5000/api/profile/unlocked/";
+    private string baseUrl = "https://word-smith-c8ny.onrender.com/api/profile/unlocked/";
 
     [System.Serializable]
     public class UnlockedData

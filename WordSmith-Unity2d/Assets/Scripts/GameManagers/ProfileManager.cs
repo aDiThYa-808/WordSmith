@@ -12,7 +12,7 @@ public class ProfileManager : MonoBehaviour
     public TextMeshProUGUI starsText;
     public TextMeshProUGUI avgTimeText;
 
-    private string baseUrl = "http://localhost:5000/api/profile/";
+    private string baseUrl = "https://word-smith-c8ny.onrender.com/api/profile/";
 
     [System.Serializable]
     public class ProfileData

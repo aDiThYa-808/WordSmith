@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class GamePlayManager : MonoBehaviour
@@ -14,6 +15,9 @@ public class GamePlayManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI textMessage;
     [SerializeField] private TextMeshProUGUI timer;
+    [SerializeField] private GameObject pauseMenu;
+
+    
 
     private float elapsedTime = 0f;
     private bool timerRunning = false;
@@ -23,6 +27,17 @@ public class GamePlayManager : MonoBehaviour
         elapsedTime = 0f;
         timerRunning = true;
         StartCoroutine(UpdateTimer());
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            if (!pauseMenu.activeSelf)
+            {
+                Pause();
+            }
+        }
     }
 
     IEnumerator UpdateTimer()
@@ -65,4 +80,38 @@ public class GamePlayManager : MonoBehaviour
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
+    public void resume()
+    {
+        Time.timeScale = 1f;
+        timerRunning = true;
+        pauseMenu.SetActive(false);
+    }
+
+    private void Pause()
+    {
+        Time.timeScale = 0f;
+        timerRunning = false;
+        pauseMenu.SetActive(true);
+    }
+
+    public void quitgame()
+    {
+        StartCoroutine(LoadScene("Levels"));
+    }
+
+
+    public IEnumerator LoadScene(string SceneName)
+    {
+        AsyncOperation scene = SceneManager.LoadSceneAsync(SceneName);
+        scene.allowSceneActivation = false;
+
+        while (!scene.isDone)
+        {
+            if (scene.progress >= 0.9f)
+            {
+                scene.allowSceneActivation = true;
+            }
+            yield return null;
+        }
+    }
 }

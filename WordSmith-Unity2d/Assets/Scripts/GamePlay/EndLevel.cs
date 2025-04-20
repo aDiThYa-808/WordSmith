@@ -19,6 +19,7 @@ public class EndLevel : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource ButtonSrc;
+    [SerializeField] private GameObject BGMsrc;
     
     public AudioClip LevelUpSound;
     public AudioClip SuccessButtonSound;
@@ -43,6 +44,7 @@ public class EndLevel : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            BGMsrc.SetActive(false);
             EndLevelPanel.SetActive(true);
             player.SetActive(false);
         }

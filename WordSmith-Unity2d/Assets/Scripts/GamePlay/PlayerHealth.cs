@@ -13,6 +13,7 @@ public class PlayerHealth : MonoBehaviour
     public AudioSource CollectableAudioSrc;
     public AudioSource PlayerVoiceSrc;
     [SerializeField] private AudioSource MusicAudioSrc;
+    [SerializeField] private GameObject BGMsrc;
 
     [Header("Audio Clips")]
     public AudioClip PlayerHurtSfx;
@@ -70,6 +71,8 @@ public class PlayerHealth : MonoBehaviour
                 //disable player movements after death
                 GetComponent<PlayerMovement>().enabled = false;
                 dead = true;
+
+                BGMsrc.SetActive(false);
 
                 GameOver();
                 

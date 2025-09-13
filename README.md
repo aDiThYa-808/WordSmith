@@ -1,4 +1,4 @@
-# WordSmith 🎮
+# WordSmith 
 
 **WordSmith** is a 2D side-scrolling action platformer built with Unity URP.
 

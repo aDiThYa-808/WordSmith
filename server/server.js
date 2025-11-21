@@ -6,7 +6,7 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://localhost:27017/mydatabase"; // Fallback for local dev
+  process.env.MONGO_URI
 
 // Middleware
 app.use(express.json());
@@ -15,7 +15,7 @@ app.use(cors());
 // Connect to MongoDB
 mongoose
   .connect(MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
+  .then(() => console.log("MongoDB connected"))
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);
     process.exit(1); // Exit process if DB connection fails
@@ -27,7 +27,7 @@ try {
   app.use("/api/progress", require("./routes/progressRoutes"));
   app.use("/api/leaderboard", require("./routes/leaderboardRoutes"));
   app.use("/api/profile", require("./routes/profileRoutes"));
-  console.log("✅ Routes loaded successfully");
+  console.log("Routes loaded successfully");
 } catch (err) {
   console.error("❌ Error loading routes:", err);
 }

@@ -36,7 +36,7 @@ router.get("/:levelNumber", async (req, res) => {
 
     res.json(leaderboard);
   } catch (err) {
-    console.error("❌ Error fetching leaderboard:", err.message);
+    console.error("Error fetching leaderboard:", err.message);
     res.status(500).json({ msg: "Server error while fetching leaderboard" });
   }
 });

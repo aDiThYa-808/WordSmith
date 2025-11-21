@@ -59,7 +59,7 @@ router.get("/:username", async (req, res) => {
   }
 });
 
-// ✅ Route: Get unlocked levels
+// Route: Get unlocked levels
 router.get("/unlocked/:username", async (req, res) => {
   const username = req.params.username;
 
@@ -82,7 +82,7 @@ router.get("/unlocked/:username", async (req, res) => {
 
     res.json({ unlockedLevels: unlocked });
   } catch (err) {
-    console.error("❌ Error checking unlocked levels:", err.message);
+    console.error("Error checking unlocked levels:", err.message);
     res
       .status(500)
       .json({ msg: "Server error while checking unlocked levels" });

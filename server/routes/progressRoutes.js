@@ -4,14 +4,14 @@ const router = express.Router();
 
 // Save or update progress for specific level
 router.post("/save", async (req, res) => {
-  console.log("📩 Received progress data:", req.body);
+  console.log("Received progress data:", req.body);
 
   const { username, levelNumber, stars, timeTaken, levelComplete } = req.body;
 
   if (!username || levelNumber === undefined) {
     return res
       .status(400)
-      .json({ msg: "❌ Username and levelNumber are required." });
+      .json({ msg: "Username and levelNumber are required." });
   }
 
   try {
@@ -46,7 +46,7 @@ router.post("/save", async (req, res) => {
       });
 
       await newProgress.save();
-      return res.json({ msg: "✅ New progress saved!" });
+      return res.json({ msg: "New progress saved!" });
     }
   } catch (err) {
     console.error("❌ Server error:", err.message);
